@@ -4,19 +4,17 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
 
   <changeSet id="1" author="dmitrii">
-    <createTable tableName="event_types">
-      <column name="id" type="BIGSERIAL">
+    <createTable tableName="events" remarks="Справочник типов событий">
+      <column name="name" type="varchar(50)" remarks="Название события">
         <constraints nullable="false" primaryKey="true"/>
       </column>
-      <column name="name" type="varchar(50)" remarks="Название события">
-        <constraints nullable="false" unique="true"/>
-      </column>
+      <column name="description" type="varchar(255)" remarks="Описание события" />
     </createTable>
   </changeSet>
 
   <changeSet id="2" author="dmitrii">
-    <createTable tableName="events">
-      <column name="id" type="BIGSERIAL">
+    <createTable tableName="days" remarks="Дни производственного календаря">
+      <column name="id" type="bigserial">
         <constraints nullable="false" primaryKey="true"/>
       </column>
       <column name="date" type="date" remarks="Дата">
@@ -25,16 +23,38 @@
       <column name="country_code" type="varchar(3)" remarks="Код страны" defaultValue="RUS">
         <constraints nullable="false"/>
       </column>
-      <column name="event_type_id" type="integer" remarks="Тип события">
-        <constraints nullable="false" foreignKeyName="fk_events_event_type_id"
-          references="event_types(id)"/>
+      <column name="event_name" type="varchar(255)" remarks="Тип события">
+        <constraints nullable="false" foreignKeyName="fk_days_event_name"
+          references="events(name)"/>
       </column>
       <column name="created_at" type="TIMESTAMP(6)" remarks="Дата создания" defaultValueComputed="current_timestamp">
         <constraints nullable="false"/>
       </column>
       <column name="updated_at" type="TIMESTAMP(6)" remarks="Дата изменения" defaultValueComputed="current_timestamp"/>
     </createTable>
-    <addUniqueConstraint tableName="events" columnNames="date,country_code,event_type_id"/>
+  </changeSet>
+
+  <changeSet id="3" author="dmitrii">
+    <createIndex tableName="days" indexName="days_event_name_index">
+      <column name="event_name" />
+    </createIndex>
+    <addUniqueConstraint tableName="days" columnNames="date,country_code,event_name"/>
+  </changeSet>
+
+  <changeSet id="4" author="dmitrii" runOnChange="true">
+    <loadUpdateData tableName="events" primaryKey="name" separator=";"
+      file="db/migration/data/events.csv">
+      <column header="name" name="name" type="varchar(50)"/>
+      <column header="description" name="description" type="varchar(255)"/>
+    </loadUpdateData>
+  </changeSet>
+
+  <changeSet id="5" author="dmitrii" runOnChange="true">
+    <loadUpdateData tableName="days" primaryKey="id" separator=";"
+      file="db/migration/data/demo_data.csv">
+      <column header="date" name="date" type="date"/>
+      <column header="event_name" name="event_name" type="varchar(50)"/>
+    </loadUpdateData>
   </changeSet>
 
 </databaseChangeLog>
