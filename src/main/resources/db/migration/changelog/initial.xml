@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.6.xsd">
+
+  <changeSet id="1" author="dmitrii">
+    <createTable tableName="event_types">
+      <column name="id" type="BIGSERIAL">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="name" type="varchar(50)" remarks="Название события">
+        <constraints nullable="false" unique="true"/>
+      </column>
+    </createTable>
+  </changeSet>
+
+  <changeSet id="2" author="dmitrii">
+    <createTable tableName="events">
+      <column name="id" type="BIGSERIAL">
+        <constraints nullable="false" primaryKey="true"/>
+      </column>
+      <column name="date" type="date" remarks="Дата">
+        <constraints nullable="false"/>
+      </column>
+      <column name="country_code" type="varchar(3)" remarks="Код страны" defaultValue="RUS">
+        <constraints nullable="false"/>
+      </column>
+      <column name="event_type_id" type="integer" remarks="Тип события">
+        <constraints nullable="false" foreignKeyName="fk_events_event_type_id"
+          references="event_types(id)"/>
+      </column>
+      <column name="created_at" type="TIMESTAMP(6)" remarks="Дата создания" defaultValueComputed="current_timestamp">
+        <constraints nullable="false"/>
+      </column>
+      <column name="updated_at" type="TIMESTAMP(6)" remarks="Дата изменения" defaultValueComputed="current_timestamp"/>
+    </createTable>
+    <addUniqueConstraint tableName="events" columnNames="date,country_code,event_type_id"/>
+  </changeSet>
+
+</databaseChangeLog>
