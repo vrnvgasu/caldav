@@ -8,7 +8,8 @@ public enum EventEnum {
 	HOLIDAY("праздничный день"),
 	WORKING_WEEKEND("рабочий выходной"),
 	MOVED_HOLIDAY("перенесенный праздничный день"),
-	SHORT_WORK_DAY("сокращенный рабочий день");
+	SHORT_WORK_DAY("сокращенный рабочий день"),
+	WEEKEND("выходной");
 
 	@Getter
 	private final String description;
