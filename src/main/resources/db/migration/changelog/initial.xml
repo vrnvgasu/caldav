@@ -57,4 +57,12 @@
     </loadUpdateData>
   </changeSet>
 
+  <changeSet id="6" author="dmitrii" runOnChange="true">
+    <dropUniqueConstraint tableName="days" constraintName="days_date_country_code_event_name_key"/>
+    <addUniqueConstraint tableName="days" columnNames="date,country_code"/>
+    <createIndex tableName="days" indexName="days_date_index">
+      <column name="date" />
+    </createIndex>
+  </changeSet>
+
 </databaseChangeLog>
